@@ -1,29 +1,94 @@
-package com.company;
+package sample;
 
-import org.w3c.dom.Document;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
+import javax.xml.soap.Text;
+import java.text.Format;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
-public class Main {
+public class Main extends Application {
 
-    public static void download(String episode, String season) throws Exception {
-        String apiKey = "c1b069232d19182757fbf6387e5c0533";
-        String query = "t=tvsearch&q=one%20piece" + "&season=" + season + "&ep=" + episode + "&cat=5070";
-        URLOpener n = new URLOpener(query, apiKey);
-        Document doc = n.getXML();
-        SearchResult nzb = NzbFinder.getNzb(doc);
-        if (nzb!=null) {
-            System.out.println("Downloading " + nzb.title);
-            n.download(nzb.nzb, nzb.title);
-        }else{
-            System.out.println("Failed to download season " + season + " episode " + episode);
-        }
+    private ArrayList<ShowContainer> shows = new ArrayList<ShowContainer>();
+
+
+    @Override
+    public void start(Stage primaryStage) {
+        VBox showLayout = new VBox(10);
+        showLayout.getChildren().add(addShow());
+        primaryStage.setTitle("My First JavaFX GUI");
+        Button buttonGo = createGoButton();
+        Button buttonAdd = createShowButton(showLayout);
+        Button buttonClear = createClearButton(showLayout);
+        VBox sceneLayout = new VBox(10);
+        HBox buttonLayout = new HBox(5);
+        buttonLayout.getChildren().addAll(buttonAdd, buttonGo, buttonClear);
+        sceneLayout.getChildren().addAll(showLayout, buttonLayout);
+
+        Scene scene = new Scene(sceneLayout, 600, 250);
+
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
-    public static void main(String[] args) throws Exception {
-        for (int i = 62; i <= 135; i++) {
-            String episode = String.valueOf(i);
-            download(episode, "1");
-        }
+    private HBox addShow(){
+        HBox hBox = new HBox(5);
+        ShowContainer show = new ShowContainer();
+        hBox.getChildren().addAll(show.showLabel, show.showField, show.seasonLabel, show.seasonField, show.episodeLabel, show.episodeField);
+        shows.add(show);
+        return hBox;
+    }
+
+    private Button createGoButton(){
+        Button btn = new Button("Go!");
+        btn.setOnAction(e ->{
+            for (ShowContainer show : this.shows){
+                String s = show.getShowName();
+                String episode = show.getEpisode();
+                String season = show.getSeason();
+                System.out.println(s);
+                System.out.print(season);
+                System.out.print(episode);
+            }
+        });
+        return btn;
+    }
+
+    private Button createShowButton(VBox showLayout){
+        Button btn = new Button("Add show");
+        btn.setOnAction(e -> {
+            //Button was clicked
+            HBox show = addShow();
+            showLayout.getChildren().add(show);
+            System.out.println("Added show.");
+        } );
+        return btn;
+    }
+
+    private Button createClearButton(VBox showLayout){
+        Button btn = new Button("Clear");
+        btn.setOnAction(e ->{
+            for (ShowContainer show : this.shows){
+                show.episodeField.clear();
+                show.showField.clear();
+                show.seasonField.clear();
+            }
+        });
+        return btn;
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }
