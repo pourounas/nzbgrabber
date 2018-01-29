@@ -51,7 +51,7 @@ public class NzbFinder {
             res = resultsMap.get("1080p").get(0);
         }else if (resultsMap.get("720p").size() > 0) {
             res = resultsMap.get("720p").get(0);
-        } else {
+        } else if (resultsMap.get("sd").size() > 0){
             res = resultsMap.get("sd").get(0);
         }
         return res;

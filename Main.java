@@ -12,12 +12,16 @@ public class Main {
         URLOpener n = new URLOpener(query, apiKey);
         Document doc = n.getXML();
         SearchResult nzb = NzbFinder.getNzb(doc);
-        System.out.println("Downloading " + nzb.title);
-        n.download(nzb.nzb, nzb.title);
+        if (nzb!=null) {
+            System.out.println("Downloading " + nzb.title);
+            n.download(nzb.nzb, nzb.title);
+        }else{
+            System.out.println("Failed to download season " + season + " episode " + episode);
+        }
     }
 
     public static void main(String[] args) throws Exception {
-        for (int i = 21; i <= 61; i++) {
+        for (int i = 62; i <= 135; i++) {
             String episode = String.valueOf(i);
             download(episode, "1");
         }
