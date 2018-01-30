@@ -1,33 +1,25 @@
-package sample;
+package com.company;
 
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import javax.xml.soap.Text;
-import java.text.Format;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
 
 public class Main extends Application {
 
     private ArrayList<ShowContainer> shows = new ArrayList<ShowContainer>();
-
+    private Downloader downloader = new Downloader();
 
     @Override
     public void start(Stage primaryStage) {
         VBox showLayout = new VBox(10);
         showLayout.getChildren().add(addShow());
-        primaryStage.setTitle("My First JavaFX GUI");
+        primaryStage.setTitle("Nzb Grabber");
         Button buttonGo = createGoButton();
         Button buttonAdd = createShowButton(showLayout);
         Button buttonClear = createClearButton(showLayout);
@@ -36,7 +28,7 @@ public class Main extends Application {
         buttonLayout.getChildren().addAll(buttonAdd, buttonGo, buttonClear);
         sceneLayout.getChildren().addAll(showLayout, buttonLayout);
 
-        Scene scene = new Scene(sceneLayout, 600, 250);
+        Scene scene = new Scene(sceneLayout,800,250);
 
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -45,7 +37,9 @@ public class Main extends Application {
     private HBox addShow(){
         HBox hBox = new HBox(5);
         ShowContainer show = new ShowContainer();
-        hBox.getChildren().addAll(show.showLabel, show.showField, show.seasonLabel, show.seasonField, show.episodeLabel, show.episodeField);
+        hBox.getChildren().addAll(show.showLabel, show.showField, show.categoryLabel,
+                show.comboBox, show.seasonLabel, show.seasonField, show.episodeLabel,
+                show.episodeField);
         shows.add(show);
         return hBox;
     }
@@ -54,12 +48,11 @@ public class Main extends Application {
         Button btn = new Button("Go!");
         btn.setOnAction(e ->{
             for (ShowContainer show : this.shows){
-                String s = show.getShowName();
-                String episode = show.getEpisode();
-                String season = show.getSeason();
-                System.out.println(s);
-                System.out.print(season);
-                System.out.print(episode);
+                try {
+                    downloader.getEntry(show);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
             }
         });
         return btn;
@@ -82,6 +75,7 @@ public class Main extends Application {
             for (ShowContainer show : this.shows){
                 show.episodeField.clear();
                 show.showField.clear();
+                show.categoryField.clear();
                 show.seasonField.clear();
             }
         });

@@ -15,6 +15,7 @@ public class NzbFinder {
         String nzb;
         String title;
         String guid;
+        String size;
         HashMap<String, ArrayList<SearchResult>> resultsMap = new HashMap<String, ArrayList<SearchResult>>();
         resultsMap.put("1080p", new ArrayList<SearchResult>());
         resultsMap.put("720p", new ArrayList<SearchResult>());
@@ -24,6 +25,7 @@ public class NzbFinder {
             Element eElement = (Element) node;
             title = eElement.getElementsByTagName("title").item(0).getTextContent();
             guid = eElement.getElementsByTagName("guid").item(0).getTextContent();
+            //size = eElement.getElementsByTagName("size").item(0).getTextContent();
             nzb = guid.split("details/")[1];
             if (title.contains("1080p")) {
                 SearchResult hit = new SearchResult(title, "1080p", nzb);
